@@ -2,12 +2,18 @@
 #include <stdio.h>
 
 int N,T;
+//pthread_t tid[T];
 
-void *print_prime(void *ptr){
-	int i=1;
+void *print_prime(void *jum){
+	int count=0;
+	int baginya = N/T;
+	pthread_t id=pthread_self();
 //	printf("a\n");
-	for (int i=2;i<=N;i++){
-//		printf ("cek angka %d\n", i);
+	int angka= *((int*)jum);
+	printf ("angka: %d\n", angka);
+//	if (pthread_equal(id,tid[count])){
+	for (int i=count*baginya;i<=angka*baginya;i++){
+		printf ("cek count %d\n", count);
 		int temp=0;
 		for (int j=2;j<=i;j++){
 			if (i%j==0){
@@ -15,6 +21,9 @@ void *print_prime(void *ptr){
 			}
 		}
 	if (temp==1) printf ("prima : %i\n",i);
+//		}
+	count++;
+//	angka++;
 	}
 	return NULL;
 }
@@ -27,16 +36,19 @@ int main(){
 	scanf ("%d", &T);
 //	N=10;
 	int jum=0;
-	pthread_t thread1;
-//	while (jum<T)
-//	{
-	err=pthread_create( &thread1, NULL, print_prime, NULL);
+	pthread_t tid[T];
+	while (jum<T)
+	{
+	err=pthread_create( &tid[jum], NULL, print_prime,&jum);
 //	print_prime();
 	if (err!=0){
 	printf ("cant create\n");}
 	else printf ("success\n");
-//	jum++;
-//	}
+	jum++;
+//	getchar();
+	}
 	getchar();
-	pthread_join (thread1, NULL);
+//	for (int x=1;x<=T;x++){
+//	pthread_join (tid[x], NULL);
+//	}
 }
