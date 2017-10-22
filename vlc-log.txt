@@ -1,0 +1,5 @@
+﻿-- logger module started --
+lua: Listening on host "telnet://localhost:4212".
+core error: socket bind error: Permission denied
+lua error: Error loading script /usr/lib/x86_64-linux-gnu/vlc/lua/intf/telnet.luac: lua/intf/modules/host.lua:221: Cannot listen on localhost:4212
+-- logger module stopped --
