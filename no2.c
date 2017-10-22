@@ -1,19 +1,24 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-pthread_mutex_t lock;
+int status;
+int nomor;
+
+//pthread_mutex_t lock;
 
 typedef struct{
 	int bawah;
 	int atas;
+//	pthread_mutex_t lock;
 } batas;
 
 int N,T;
 
 int cek(int N){
 	int i;
-	printf ("coba cek : %d\n", N);
+//	printf ("coba cek : %d\n", N);
 	if (N<2) return 0;
 	for (i=2;i*i<=N;i++){
 		if (N%i==0) return 0;
@@ -22,18 +27,18 @@ int cek(int N){
 }
 
 void *print_prime(void *jum){
-	int count=0;
-	int baginya = N/T;
-//	printf("a\n");
+//	pthread_mutex_lock (&lock);
+	int i;
+	status = 0;
 	batas *bagian = jum;
-	pthread_mutex_lock (&lock);
-	printf ("batas bawah dan atas : %d, %d\n",bagian->bawah, bagian->atas);
-	for (int i=bagian->bawah;i<=bagian->atas;i++){
+//	printf ("batas bawah dan atas : %d, %d\n",bagian->bawah, bagian->atas);
+	for (i=bagian->bawah;i<=bagian->atas;i++){
 //		printf ("cek bagian bawah & atas:%d , %d\n", bagian->bawah, bagian->atas);
-		int temp=0;
 		if (cek(i)) printf ("%d\n", i);
 	}
-	pthread_mutex_unlock (&lock);
+	status =1;
+	//if (pthread_mutex_unlock (&lock)==0)printf ("mutex bisa\n");
+//	pthread_mutex_unlock(&lock);
 	return 0;
 }
 
@@ -47,9 +52,11 @@ int main(){
 	int jum=0;
 	int counter=1;
 	pthread_t tid[T+1];
-	pthread_mutex_init (&lock, NULL);
+//	if (pthread_mutex_init (&lock, NULL)!=0) printf ("mutex gagal\n");
+//	pthread_mutex_lock (&bagian.lock);
 	while (jum<T)
-	{	printf ("jumnya : %d\n", jum);
+	{	status=0;
+		//printf ("jumnya : %d\n", jum);
 		if (jum==T-1){
 			bagian.bawah=counter;
 			bagian.atas=N;}
@@ -57,16 +64,18 @@ int main(){
 			bagian.bawah=counter;
 			bagian.atas= counter + (N/T) - 1;
 			counter = counter +(N/T);}
-		printf ("start, end nya: %d, %d \n",bagian.bawah, bagian.atas);
+		//printf ("start, end nya: %d, %d \n",bagian.bawah, bagian.atas);
 		err=pthread_create( &(tid[jum]), NULL, print_prime,(void*)&bagian);
-	if (err!=0){
-	printf ("cant create\n");}
-	else printf ("success\n");
-	jum++;
-
+		printf ("Thread %d\n", jum);
+		if (err!=0){
+		printf ("cant create\n");}
+		//else printf ("success\n");
+		while (status!=1) {}
+		jum++;
 	}
 
 	for (int x=0;x<T;x++){
 	pthread_join (tid[x], NULL);
 	}
+//	pthread_mutex_destroy (&lock);
 }
