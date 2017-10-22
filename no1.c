@@ -14,12 +14,12 @@ void* menyalin(void *arg)
     int iter;
     if(pthread_equal(id,tid[0]))//thread untuk menjalankan counter
     {
-        system("cat baca.txt | awk '{ print $0 }' >> salin1.txt ");
+        system("cp baca.txt salin1.txt");
         printf("salin1 sukses");
     }
     else if(pthread_equal(id,tid[1]))
     {
-        system("cat salin1.txt | awk '{ print $0 }' >> salin2.txt");
+        system("cp salin1.txt salin2.txt");
         printf("salin2 sukses");
     }
     return NULL;
@@ -41,7 +41,7 @@ int main(void){
         }
         i++;
     }
-    pthread_join(tid[0],NULL);
     pthread_join(tid[1],NULL);
+    pthread_join(tid[0],NULL);
     return 0;
 }
